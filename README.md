@@ -61,7 +61,7 @@ function MyComponent() {
   const tabPortal = useTabPortal();
 
   return (
-    <TabPortal>
+    <>
       <div>
         <input placeholder="Foo" />
         <TabPortal.Portal to={tabPortal} />
@@ -76,7 +76,7 @@ function MyComponent() {
         </select>
       </TabPortal.Content>
       <input placeholder="Bar" />
-    </TabPortal>
+    </>
   );
 }
 ```
