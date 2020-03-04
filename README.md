@@ -3,6 +3,8 @@
 Customize the tab order to jump to a different section of the document _without_
 modifying every single `tabindex` on the entire page!
 
+![Demo](./demo.gif)
+
 Useful when you have a component (like a dropdown) whose DOM hierarchy cannot match
 the desired tab order for design purposes (e.g. it needs to reference a different `position: relative` parent, or stay in flow to take up the available width/height).
 
