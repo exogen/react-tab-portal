@@ -12,7 +12,7 @@ the desired tab order for design purposes (e.g. it needs to reference a differen
 
 Every tab portal must have a `<TabPortal.Content>` (the section of tabbable
 elements you want to be out of order) and a `<TabPortal.Portal>` (the element
-that will skip you to the content when reached in the tab order). Thing of the
+that will skip you to the content when reached in the tab order). Think of the
 portal like an entrance to the content, and the end of the content has an exit
 back to the portal!
 
