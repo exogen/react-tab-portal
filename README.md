@@ -80,3 +80,7 @@ function MyComponent() {
   );
 }
 ```
+
+## How it works
+
+![Diagram](./diagram.png)
