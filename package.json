@@ -12,11 +12,15 @@
     "build:dist": "rollup -c",
     "build": "npm run build:dist",
     "format": "eslint --fix .",
+    "lint": "eslint .",
     "postbuild": "npm run size",
     "prebuild": "rimraf dist",
     "prepare": "npm run build:dist",
     "size": "bundlesize",
-    "start": "next dev"
+    "start": "next dev",
+    "test": "npm run lint && npm run test:coverage",
+    "test:coverage": "jest --coverage",
+    "test:only": "jest"
   },
   "bundlesize": [
     {
@@ -45,14 +49,21 @@
     "tabbable": "^4.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-react": "^7.8.3",
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-node-resolve": "^7.1.1",
+    "@testing-library/jest-dom": "^5.1.1",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^10.0.0",
     "bundlesize": "^0.18.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^2.5.0",
+    "jest": "^25.1.0",
     "next": "^9.2.2",
     "prettier": "^1.19.1",
     "react": "^16.13.0",

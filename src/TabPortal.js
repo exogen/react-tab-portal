@@ -1,19 +1,16 @@
-import React, { useCallback, useContext, useMemo, useRef } from "react";
-import useTabPortal from "./useTabPortal";
-import { getTabbableNodes, focusBefore, focusAfter } from "./utils";
-
-const hiddenFocusableStyle = {
-  position: "absolute",
-  opacity: 0,
-  width: 0,
-  height: 0,
-  pointerEvents: "none",
-  zIndex: -1
-};
+import React, { useCallback, useContext, useRef } from 'react';
+import HiddenTabbable from './HiddenTabbable';
+import useTabPortal from './useTabPortal';
+import {
+  getTabbableNodes,
+  focusBefore,
+  focusAfter,
+  didMoveBackward
+} from './utils';
 
 const Context = React.createContext();
 
-function Portal({ children, to: tabPortal }) {
+function Portal({ to: tabPortal, ...rest }) {
   const context = useContext(Context);
 
   if (!tabPortal) {
@@ -28,9 +25,17 @@ function Portal({ children, to: tabPortal }) {
       const contentNode = contentRef.current;
       if (contentNode) {
         const tabItems = getTabbableNodes(contentNode);
+        const isMovingBackward = didMoveBackward(
+          event.currentTarget,
+          event.relatedTarget
+        );
         if (tabItems.length > 2) {
-          tabItems[1].focus();
+          const focusIndex = isMovingBackward ? tabItems.length - 2 : 1;
+          tabItems[focusIndex].focus();
           return;
+        } else {
+          // FIXME: Move to correct place outside of content element in this
+          // case.
         }
       }
       event.currentTarget.blur();
@@ -38,20 +43,22 @@ function Portal({ children, to: tabPortal }) {
     [contentRef]
   );
 
-  return (
-    <span
-      tabIndex={0}
-      ref={portalRef}
-      style={hiddenFocusableStyle}
-      onFocus={handleFocus}
-    />
-  );
+  return <HiddenTabbable {...rest} ref={portalRef} onFocus={handleFocus} />;
 }
 
-Portal.displayName = "TabPortal.Portal";
+Portal.displayName = 'TabPortal.Portal';
 
 const Content = React.forwardRef(
-  ({ as: ElementType = "div", children, from: tabPortal }, inputRef) => {
+  (
+    {
+      as: ElementType = 'div',
+      children,
+      from: tabPortal,
+      hiddenTabbableAs,
+      ...rest
+    },
+    inputRef
+  ) => {
     const headRef = useRef();
     const tailRef = useRef();
     const context = useContext(Context);
@@ -74,14 +81,14 @@ const Content = React.forwardRef(
           event.relatedTarget &&
           contentNode.contains(event.relatedTarget)
         ) {
-          // If focus moved here from inside the content, we're
-          // moving backwards and should thus move focus back to the
-          // last tabbable element before the portal.
+          // If focus moved here from inside the content, we're moving backward
+          // and should thus move focus back to the last tabbable element before
+          // the portal.
           focused = focusBefore(portalRef.current);
         } else {
-          // Otherwise, it means we've tabbed forward from the last
-          // element before the content, and we should skip to the
-          // first tabbable element after the portal.
+          // Otherwise, it means we've tabbed forward from the last element
+          // before the content, and we should skip to the first tabbable
+          // element after the content.
           focused = focusAfter(tailRef.current);
         }
         if (!focused) {
@@ -95,24 +102,22 @@ const Content = React.forwardRef(
     const handleFocusTail = useCallback(
       event => {
         event.stopPropagation();
-        if (
-          event.relatedTarget &&
-          event.currentTarget.compareDocumentPosition(event.relatedTarget) &
-            Node.DOCUMENT_POSITION_FOLLOWING
-        ) {
-          // If focus moved here from after this element in the
-          // document order, we're moving backwards and should thus
-          // skip to the last tabbable element before the portal.
-          headRef.current.focus();
+        let focused = false;
+
+        if (didMoveBackward(event.currentTarget, event.relatedTarget)) {
+          // If focus moved here from after this element in the document order,
+          // we're moving backward and should thus skip to the last tabbable
+          // element before the content.
+          focused = focusBefore(headRef.current);
         } else {
-          // Otherwise, it means we've tabbed forward from inside
-          // the content, and we should move focus back to the first
-          // tabbable element after the portal.
-          const focused = focusAfter(portalRef.current);
-          if (!focused) {
-            event.currentTarget.blur();
-            document.body.focus();
-          }
+          // Otherwise, it means we've tabbed forward from inside the content,
+          // and we should move focus back to the first tabbable element after
+          // the portal.
+          focused = focusAfter(portalRef.current);
+        }
+        if (!focused) {
+          event.currentTarget.blur();
+          document.body.focus();
         }
       },
       [portalRef]
@@ -121,7 +126,7 @@ const Content = React.forwardRef(
     const ref = useCallback(
       node => {
         contentRef.current = node;
-        if (typeof inputRef === "function") {
+        if (typeof inputRef === 'function') {
           inputRef(node);
         } else if (inputRef) {
           inputRef.current = node;
@@ -131,22 +136,26 @@ const Content = React.forwardRef(
     );
 
     return (
-      <ElementType ref={ref}>
-        <span
-          // The "head" focusable item inside the portal. It serves to
-          // capture when focus moves to the beginning of the portal, which
+      <ElementType ref={ref} {...rest}>
+        <HiddenTabbable
+          // The "head" focusable item inside the content. It serves to
+          // capture when focus moves to the beginning of the content, which
           // means the user has either tabbed forward to it from the previous
-          // element, or tabbed backward from an element inside the portal.
+          // element in document order, or tabbed backward from an element
+          // inside the content (like something in `children`, or the "tail").
+          as={hiddenTabbableAs}
           ref={headRef}
-          tabIndex={0}
-          style={hiddenFocusableStyle}
           onFocus={handleFocusHead}
         />
         {children}
-        <span
+        <HiddenTabbable
+          // The "tail" focusable item inside the content. It serves to
+          // capture when focus has reached the end of the content, which
+          // means the user has either tabbed backward to it from the next
+          // element in document order, or tabbed forward to it from an element
+          // inside the content (like something in `children`, or the "head").
+          as={hiddenTabbableAs}
           ref={tailRef}
-          tabIndex={0}
-          style={hiddenFocusableStyle}
           onFocus={handleFocusTail}
         />
       </ElementType>
@@ -154,7 +163,7 @@ const Content = React.forwardRef(
   }
 );
 
-Content.displayName = "TabPortal.Content";
+Content.displayName = 'TabPortal.Content';
 
 function TabPortal({ children }) {
   const value = useTabPortal();

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef } from 'react';
 
 export default function useTabPortal() {
   const contentRef = useRef();

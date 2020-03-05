@@ -1,4 +1,4 @@
-import tabbable from "tabbable";
+import tabbable from 'tabbable';
 
 export function getTabbableNodes(parentNode) {
   return tabbable(parentNode);
@@ -13,7 +13,6 @@ export function focusAfter(node) {
       const nextTab = tabItems[nextIndex];
       nextTab.focus();
       return true;
-      return;
     }
   }
   return false;
@@ -31,4 +30,13 @@ export function focusBefore(node) {
     }
   }
   return false;
+}
+
+export function didMoveBackward(target, relatedTarget) {
+  return relatedTarget
+    ? Boolean(
+        target.compareDocumentPosition(relatedTarget) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+      )
+    : false;
 }

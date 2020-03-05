@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { TabPortal, useTabPortal } from "../src";
+import React from 'react';
+import { TabPortal } from '../src';
 
 export default function HomePage() {
   return (
@@ -18,7 +18,12 @@ export default function HomePage() {
                 <option>A</option>
                 <option>B</option>
                 <option>C</option>
-              </select>{" "}
+              </select>{' '}
+              <select>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+              </select>{' '}
               &larr; This should come in between the top input and buttons in
               the tab order, even though it’s after the buttons in the document
               order!
@@ -36,7 +41,7 @@ export default function HomePage() {
                   <option>A</option>
                   <option>B</option>
                   <option>C</option>
-                </select>{" "}
+                </select>{' '}
                 &larr; This should come in between the two buttons below, even
                 though it comes before all remaining elements in the document
                 order!
