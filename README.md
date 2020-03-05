@@ -1,4 +1,4 @@
-# react-tab-portal
+# <img src="./portal-left.png" height="40" alt=""> react-tab-portal <img src="./portal-right.png" height="40" alt="">
 
 Customize the tab order to jump to a different section of the document _without_
 modifying every single `tabindex` on the entire page!
