@@ -22,6 +22,7 @@ function Portal({ to: tabPortal, ...rest }) {
   const handleFocus = useCallback(
     event => {
       event.stopPropagation();
+      let focused = false;
       const contentNode = contentRef.current;
       if (contentNode) {
         const tabItems = getTabbableNodes(contentNode);
@@ -32,15 +33,20 @@ function Portal({ to: tabPortal, ...rest }) {
         if (tabItems.length > 2) {
           const focusIndex = isMovingBackward ? tabItems.length - 2 : 1;
           tabItems[focusIndex].focus();
-          return;
+          focused = true;
         } else {
-          // FIXME: Move to correct place outside of content element in this
-          // case.
+          if (isMovingBackward) {
+            focused = focusBefore(portalRef.current);
+          } else {
+            focused = focusAfter(portalRef.current);
+          }
         }
       }
-      event.currentTarget.blur();
+      if (!focused) {
+        event.currentTarget.blur();
+      }
     },
-    [contentRef]
+    [contentRef, portalRef]
   );
 
   return <HiddenTabbable {...rest} ref={portalRef} onFocus={handleFocus} />;
@@ -93,7 +99,6 @@ const Content = React.forwardRef(
         }
         if (!focused) {
           event.currentTarget.blur();
-          document.body.focus();
         }
       },
       [contentRef, portalRef]
@@ -117,7 +122,6 @@ const Content = React.forwardRef(
         }
         if (!focused) {
           event.currentTarget.blur();
-          document.body.focus();
         }
       },
       [portalRef]

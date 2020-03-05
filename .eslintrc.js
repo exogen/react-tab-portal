@@ -21,10 +21,15 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module'
   },
+  settings: {
+    react: {
+      version: '16.8'
+    }
+  },
   plugins: ['react', 'react-hooks'],
   rules: {
     'react/prop-types': 'off',
-    'react-hooks/exhaustive-deps': 'warn',
+    'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error'
   }
 };
