@@ -82,6 +82,8 @@ const Content = React.forwardRef(
 
         const contentNode = contentRef.current;
         if (event.relatedTarget === tailRef.current) {
+          // FIXME: I can't remember the motivation for adding this particular
+          // branch. It made sense at the time.
           focused = focusBefore(headRef.current);
         } else if (
           event.relatedTarget &&
