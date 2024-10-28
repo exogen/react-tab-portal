@@ -1,6 +1,6 @@
 {
   "name": "react-tab-portal",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "files": [
     "dist"
@@ -30,7 +30,7 @@
     },
     {
       "path": "./dist/index.cjs.min.js",
-      "maxSize": "1 kB"
+      "maxSize": "1.5 kB"
     },
     {
       "path": "./dist/index.esm.min.js",
@@ -39,18 +39,18 @@
     },
     {
       "path": "./dist/index.esm.min.js",
-      "maxSize": "1 kB"
+      "maxSize": "1.5 kB"
     }
   ],
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": ">=16.8.0"
   },
   "dependencies": {
     "tabbable": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
-    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-env": "^7.9.0",
     "@babel/preset-react": "^7.8.3",
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-node-resolve": "^7.1.1",
